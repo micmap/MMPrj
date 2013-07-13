@@ -31,7 +31,7 @@ public class ZvzPageExtractor implements IExtractor {
 	
 	public ZvzPageExtractor(WebDriver webDriver) {
 		this.webDriver = webDriver;
-		idsFrequency = new HashMap<>();
+		idsFrequency = new HashMap<String, Integer>();
 	}
 
 	/**
