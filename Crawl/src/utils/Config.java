@@ -1,5 +1,7 @@
 package utils;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
+
 /**
  * Config utilities
  * @author Inbal
@@ -7,26 +9,80 @@ package utils;
  */
 public class Config {
 
-	// TODO read this from xml
+	private static final String CONF_FILE_NAME = "config.properties";
+
+	public final static Config INSTANCE = new Config();
 	
-	public static boolean isWriteImagesToFile() {
-		return true;
+	private boolean isWriteImagesToFile;
+	private String dirToWriteImages;
+	private String startPage;
+	private boolean isCheckForDuplicates;
+	private boolean isIgnoreDuplicates;
+	private boolean isRealtors;
+	
+	private Config() {
+		
+		PropertiesConfiguration configuration;
+		try {
+			configuration = new PropertiesConfiguration(CONF_FILE_NAME);
+			
+			isWriteImagesToFile = 
+					configuration.getBoolean("isWriteImagesToFile");
+			dirToWriteImages =
+					configuration.getString("dirToWriteImages");
+			startPage = 
+					configuration.getString("startPage");
+			isCheckForDuplicates = 
+					configuration.getBoolean("isCheckForDuplicates");
+			isIgnoreDuplicates = 
+					configuration.getBoolean("isIgnoreDuplicates");
+			isRealtors =
+					configuration.getBoolean("isRealtors");
+			
+		} catch (Exception e) {
+			Logger.log("Error reading configuration", e);
+		}
 	}
 	
-	public static String dirToWriteImages() {
-		return "C:\\Crawl\\Images";
+	public boolean isWriteImagesToFile() {
+		return isWriteImagesToFile;
+	}
+	
+	public String dirToWriteImages() {
+		return dirToWriteImages;
 	}
 	
 	/**
 	 * url of the first page to start extracting from
 	 * @return
 	 */
-	public static String getStartPage() {
+	public String getStartPage() {
+		return startPage;
+	}
 
-		// all rent
-		// "http://www.zvz.co.il/AppartmentResult.aspx?t=3&search=%D7%9C%D7%94%D7%A9%D7%9B%D7%A8%D7%94"
+	/**
+	 * should the process check for duplicate items
+	 * @return
+	 */
+	public boolean isCheckForDuplicates() {
+		return isCheckForDuplicates;
+	}
 
-		// some pages in rent 
-		return "http://www.zvz.co.il/AppartmentResult.aspx?t=3&search=%D7%9C%D7%94%D7%A9%D7%9B%D7%A8%D7%94-%D7%90%D7%96%D7%95%D7%A8-%D7%94%D7%A9%D7%A8%D7%95%D7%9F-%D7%A8%D7%9E%D7%AA-%D7%94%D7%A9%D7%A8%D7%95%D7%9F---%D7%94%D7%A8%D7%A6%D7%9C%D7%99%D7%94-%D7%A8%D7%9E%D7%AA-%D7%94%D7%A9%D7%A8%D7%95%D7%9F---%D7%94%D7%A8%D7%A6%D7%9C%D7%99%D7%94-%D7%94%D7%A8%D7%A6%D7%9C%D7%99%D7%94-3-%D7%97%D7%93%D7%A8%D7%99%D7%9D#SR_top";
+	/**
+	 * if a duplicate item is encountered should it be saved or not.
+	 * only relevant if duplicate items are checked for.
+	 * @return
+	 */
+	public boolean isIgnoreDuplicates() {
+		return isIgnoreDuplicates;
+	}
+
+	/**
+	 * should realtor items be extracted or regular items.
+	 * can't do both..
+	 * @return
+	 */
+	public boolean isRealtors() {
+		return isRealtors;
 	}
 }

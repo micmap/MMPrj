@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import utils.Config;
 import utils.Logger;
 
 import data.ZvzListItem;
@@ -49,6 +50,9 @@ public class ZvzItemExtractor implements IExtractor {
 	private static final String PROPS_2_FORMAT = "tbody[1]/tr[%s]/td[1]/div[1]";
 	private static final String PROPS_1_SUFFIX = "_props_1";
 	private static final String PROPS_1_FORMAT = "tbody[1]/tr[%s]/td[1]/div[1]";
+	private static final String LIST_ITEM_PREFIX = "list_item_";
+	private static final String DUPLICATE_MARK_COLOR = "color: rgb(187, 187, 187)";
+	private static final String STYLE_ATTR = "style";
 	
 	WebElement itemDataContainer;
 	WebDriver webDriver;
@@ -61,6 +65,14 @@ public class ZvzItemExtractor implements IExtractor {
 				By.id(itemId + DATA_CONTAINER_ID_SUFFIX));
 		this.webDriver = webDriver;
 		this.listItem = listItem;
+		
+		WebElement listItemElement = webDriver.findElement(
+				By.id(LIST_ITEM_PREFIX + itemId));
+		String itemStyle = listItemElement.getAttribute(STYLE_ATTR);
+		boolean isDuplicate = itemStyle.contains(DUPLICATE_MARK_COLOR);
+		this.listItem.setIsDuplicateMark(isDuplicate);
+		
+		this.listItem.setIsRealtor(Config.INSTANCE.isRealtors());
 	}
 
 	/**

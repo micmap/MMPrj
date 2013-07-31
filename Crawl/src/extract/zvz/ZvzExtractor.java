@@ -19,6 +19,8 @@ import utils.Sleeper;
  */
 public class ZvzExtractor implements IExtractor {
 
+	private static final String REALTOR_RESULT_VIEW = "SR_lb_realtorResultView";
+
 	private static final String ZVZ_NEXT_BTN_ID = "SR_btnNextTop";
 		
 	private WebDriver webDriver;
@@ -38,9 +40,13 @@ public class ZvzExtractor implements IExtractor {
 			webDriver = new FirefoxDriver();
 		
 	    	// the first page
-			webDriver.get(Config.getStartPage());
+			webDriver.get(Config.INSTANCE.getStartPage());
 			
 			IExtractor pageExtractor = new ZvzPageExtractor(webDriver);
+			
+			if (Config.INSTANCE.isRealtors()) {
+				changeToRealtors();
+			}
 			
 		    while (true) {
 		    	boolean isKeepGoing = pageExtractor.extract();
@@ -49,6 +55,11 @@ public class ZvzExtractor implements IExtractor {
 		    	}
 		    	changeToNextPage();
 		    }
+		    
+		    int i = 0;
+		    i++;
+		    System.out.println(i);
+		    
 		} catch (Exception e) {
 	    	Logger.log("error when changing to next page", e);
 	    }
@@ -59,6 +70,17 @@ public class ZvzExtractor implements IExtractor {
 		}
 		
 		return true;
+	}
+
+	/**
+	 * 
+	 */
+	private void changeToRealtors() {
+		
+		WebElement realtorTabItem = webDriver.findElement(
+				By.id(REALTOR_RESULT_VIEW));
+		realtorTabItem.click();
+		Sleeper.sleep(10);
 	}	
 	
 	public void changeToNextPage() {

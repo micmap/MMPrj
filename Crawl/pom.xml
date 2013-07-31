@@ -27,7 +27,12 @@
                 <groupId>com.opera</groupId>
                 <artifactId>operadriver</artifactId>
             </dependency>
-        </dependencies>
+            <dependency>
+            	<groupId>commons-configuration</groupId>
+            	<artifactId>commons-configuration</artifactId>
+            	<version>1.9</version>
+            </dependency>
+  </dependencies>
         <dependencyManagement>
             <dependencies>
                 <dependency>

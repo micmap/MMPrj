@@ -1,5 +1,6 @@
 package extract.zvz;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,9 +9,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import utils.Config;
 import utils.Logger;
 import utils.Sleeper;
-
 import data.ZvzListItem;
 import extract.base.IExtractor;
 
@@ -28,10 +29,12 @@ public class ZvzPageExtractor implements IExtractor {
 	private String firstRow;
 	
 	private Map<String, Integer> idsFrequency;
+	private Map<String, List<String>> itemsFrequency;
 	
 	public ZvzPageExtractor(WebDriver webDriver) {
 		this.webDriver = webDriver;
 		idsFrequency = new HashMap<String, Integer>();
+		itemsFrequency = new HashMap<String, List<String>>();
 	}
 
 	/**
@@ -75,9 +78,19 @@ public class ZvzPageExtractor implements IExtractor {
     				isFirstRow = false;
 	        			
     				try {
+    					
     					extractItemData(row, listItem);
-    					saveListItem(listItem);
-    					updateIdsFrequency(listItem);
+    					
+    					boolean isDuplicate = checkForDuplicates(listItem);
+    					
+    					boolean isSave =
+    							isDuplicate == false ||
+    							Config.INSTANCE.isIgnoreDuplicates();
+    					
+    					if (isSave) {
+    						saveListItem(listItem);
+    					}
+    					
     				} catch (Exception e) {
     					Logger.log("Error extracting item data", e);
 					}
@@ -91,14 +104,48 @@ public class ZvzPageExtractor implements IExtractor {
 		return isKeepGoing;
 	}
 	
-	private void updateIdsFrequency(ZvzListItem listItem) {
+	/**
+	 * 
+	 * @param listItem
+	 * @return is the item a duplicate
+	 */
+	private boolean checkForDuplicates(ZvzListItem listItem) {
 
+		if (Config.INSTANCE.isCheckForDuplicates() == false) {
+			return false;
+		}
+		
+		boolean retVal = false;
+		
 		int freq = 0;
 		String id = listItem.getOrigItemId();
 		if (idsFrequency.containsKey(id)) {
 			freq = idsFrequency.get(id);
+			Logger.log("Duplicate Id!" + id);
+			retVal = true;
 		}
 		idsFrequency.put(id, freq + 1);
+		
+		String itemKey = 
+				listItem.getAddress() + 
+				listItem.getSellerPhone() + 
+				listItem.getSellerName();
+		
+		List<String> currIds;
+		if (itemsFrequency.containsKey(itemKey)) {
+			currIds = itemsFrequency.get(itemKey);
+			Logger.log("Duplicate Item! " + itemKey);
+			for (String string : currIds) {
+				Logger.log(string);
+			}
+			retVal = true;
+		} else {
+			currIds = new ArrayList<String>();
+		}
+		currIds.add(id);
+		itemsFrequency.put(itemKey, currIds);
+		
+		return retVal;
 	}
 
 	private void saveListItem(ZvzListItem listItem) {

@@ -1,7 +1,6 @@
 package extract.zvz;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -203,12 +202,12 @@ public class ZvzImageExtractor implements IExtractor {
 	 */
 	private void writeToFile(int imgIndex, byte[] data) {
 
-		if (Config.isWriteImagesToFile()) {
+		if (Config.INSTANCE.isWriteImagesToFile()) {
 			
-			IO.createDir(Config.dirToWriteImages());
+			IO.createDir(Config.INSTANCE.dirToWriteImages());
 			
 			String fileName = 
-					Config.dirToWriteImages() + "\\" +
+					Config.INSTANCE.dirToWriteImages() + "\\" +
 					listItem.getOrigItemId() + "_" + imgIndex + ".png";
 			
 			IO.writeToFile(fileName, data);

@@ -33,6 +33,8 @@ public class ZvzListItem {
 	private String furnitureNotes;
 	private String notes;
 	private byte[][] imagesBlob;
+	private boolean isDuplicateMark;
+	private boolean isRealtor;
 	
 	public ZvzListItem() {
 	}
@@ -90,6 +92,10 @@ public class ZvzListItem {
 		bldr.append("furnitureNotes:" + furnitureNotes);
 		bldr.append("\n");
 		bldr.append("notes:" + notes);
+		bldr.append("\n");
+		bldr.append("isDuplicate:" + isDuplicateMark);
+		bldr.append("\n");
+		bldr.append("isRealtor:" + isRealtor);
 		bldr.append("\n");
 		int numOfImages = imagesBlob != null ? imagesBlob.length : 0;
 		bldr.append("images:" + numOfImages);
@@ -409,6 +415,31 @@ public class ZvzListItem {
 
 	public void setImagesBlob(byte[][] imagesBlob) {
 		this.imagesBlob = imagesBlob;
+	}
+
+	/**
+	 * is the item marked with a grey text color which probably
+	 * indicates it is a duplicate
+	 * @return
+	 */
+	public boolean getIsDuplicateMark() {
+		return isDuplicateMark;
+	}
+	
+	public void setIsDuplicateMark(boolean isDuplicateMark) {
+		this.isDuplicateMark = isDuplicateMark;		
+	}
+
+	/**
+	 * is items extracted from the realtor tab
+	 * @return
+	 */
+	public boolean getIsRealtor() {
+		return isRealtor;
+	}
+
+	public void setIsRealtor(boolean isRealtor) {
+		this.isRealtor = isRealtor;
 	}
 
 	////////// getters and setters //////////
