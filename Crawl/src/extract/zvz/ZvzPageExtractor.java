@@ -13,6 +13,7 @@ import utils.Config;
 import utils.Logger;
 import utils.Sleeper;
 import data.ZvzListItem;
+import db.DB;
 import extract.base.IExtractor;
 
 /**
@@ -151,7 +152,8 @@ public class ZvzPageExtractor implements IExtractor {
 	private void saveListItem(ZvzListItem listItem) {
 
 		Logger.log("Saving list item: " + listItem.getOrigItemId());
-		Logger.log(listItem.toString());
+		//Logger.log(listItem.toString());
+		DB.save(listItem);
 	}
 
 	private boolean isValidRow(WebElement row) {

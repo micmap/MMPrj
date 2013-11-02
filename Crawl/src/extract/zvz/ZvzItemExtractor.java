@@ -32,14 +32,15 @@ public class ZvzItemExtractor implements IExtractor {
 	private static final String FURNITURE_STRING = "ריהוט: ";
 	private static final String AC_STRING = "מיזוג אוויר: ";
 	private static final String SORAGIM_STRING = "סורגים: ";
-	private static final String BALCONY_STRING = "מרפסת: ";
+	private static final String BALCONY_STRING = "מרפסות: ";
 	private static final String ROOMATES_STRING = "מתאים לשותפים: ";
 	private static final String ELEVATOR_STRING = "מעלית: ";
 	private static final String FOR_DISABLED_STRING = "גישה לנכים: ";
 	private static final String NEIGHBORHOOD_STRING = "שכונה: ";
 	private static final String FURNITURE_NOTES_STRING = "פירוט הריהוט: ";
 	private static final String NOTES_STRING = "הערות: ";
-	
+	private static final String PROTECTED_SPACE = "ממ\"ד: ";
+				
 	private static final String DATA_CONTAINER_ID_SUFFIX = "_container";
 	private static final String NOTES_ID = "ctl00_lblNotes";
 	private static final String FURNITURE_NOTES_ID = "ctl00_lblapp_Furniture";
@@ -52,7 +53,7 @@ public class ZvzItemExtractor implements IExtractor {
 	private static final String PROPS_1_FORMAT = "tbody[1]/tr[%s]/td[1]/div[1]";
 	private static final String LIST_ITEM_PREFIX = "list_item_";
 	private static final String DUPLICATE_MARK_COLOR = "color: rgb(187, 187, 187)";
-	private static final String STYLE_ATTR = "style";
+	private static final String STYLE_ATTR = "style";	
 	
 	WebElement itemDataContainer;
 	WebDriver webDriver;
@@ -212,10 +213,7 @@ public class ZvzItemExtractor implements IExtractor {
 					listItem.setAc(txt);
 				} else if (fullText.startsWith(SORAGIM_STRING)) {
 					String txt = delFromTxt(fullText, SORAGIM_STRING);
-					listItem.setSoragim(txt);
-				} else if (fullText.startsWith(BALCONY_STRING)) {
-					String txt = delFromTxt(fullText, BALCONY_STRING);
-					listItem.setBalcony(txt);
+					listItem.setSoragim(txt);				
 				} else if (fullText.startsWith(ROOMATES_STRING)) {
 					String txt = delFromTxt(fullText, ROOMATES_STRING);
 					listItem.setRoomates(txt);
@@ -225,6 +223,9 @@ public class ZvzItemExtractor implements IExtractor {
 				} else if (fullText.startsWith(FOR_DISABLED_STRING)) {
 					String txt = delFromTxt(fullText, FOR_DISABLED_STRING);
 					listItem.setForDisabled(txt);
+				} else if (fullText.startsWith(PROTECTED_SPACE)) {
+					String txt = delFromTxt(fullText, PROTECTED_SPACE);
+					listItem.setProtectedSpace(txt);
 				} else {
 					Logger.log("*** Unknown prop in prop2: " + fullText + " " + i);
 				}
@@ -282,6 +283,9 @@ public class ZvzItemExtractor implements IExtractor {
 				} else if (fullText.startsWith(NEIGHBORHOOD_STRING)) {
 					String txt = delFromTxt(fullText, NEIGHBORHOOD_STRING);
 					listItem.setNeighborhood(txt);
+				} else if (fullText.startsWith(BALCONY_STRING)) {
+					String txt = delFromTxt(fullText, BALCONY_STRING);
+					listItem.setBalcony(txt);
 				} else {
 					Logger.log("Unknown prop in prop1: " + fullText + " " + i);
 				}

@@ -35,6 +35,7 @@ public class ZvzListItem {
 	private byte[][] imagesBlob;
 	private boolean isDuplicateMark;
 	private boolean isRealtor;
+	private String protectedSpace;
 	
 	public ZvzListItem() {
 	}
@@ -96,6 +97,8 @@ public class ZvzListItem {
 		bldr.append("isDuplicate:" + isDuplicateMark);
 		bldr.append("\n");
 		bldr.append("isRealtor:" + isRealtor);
+		bldr.append("\n");
+		bldr.append("protectedSpace:" + protectedSpace);
 		bldr.append("\n");
 		int numOfImages = imagesBlob != null ? imagesBlob.length : 0;
 		bldr.append("images:" + numOfImages);
@@ -440,6 +443,28 @@ public class ZvzListItem {
 
 	public void setIsRealtor(boolean isRealtor) {
 		this.isRealtor = isRealtor;
+	}
+
+	/**
+	 * does the appartemnt have a protected space (mamad)
+	 * @return
+	 */
+	public String getProtectedSpace() {
+		return protectedSpace;
+	}
+
+	public void setProtectedSpace(String protectedSpace) {
+		this.protectedSpace = protectedSpace;
+	}
+
+	public String getSellerPhone2() {
+		// TODO implement
+		return getSellerPhone();
+	}
+
+	public String getCountry() {
+		// TODO implement
+		return "ישראל";
 	}
 
 	////////// getters and setters //////////
