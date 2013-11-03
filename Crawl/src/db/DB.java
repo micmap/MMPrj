@@ -1,9 +1,15 @@
 package db;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import org.postgresql.geometric.PGpoint;
+import org.postgresql.largeobject.BlobInputStream;
 
 import utils.Logger;
 import data.ZvzListItem;
@@ -71,6 +77,20 @@ public class DB {
 			propStmt.setBoolean(18, getBool(item.getElevator()));
 			propStmt.setInt(19, -1); // TODO: flagschecksum
 			
+			byte[] img = null;
+			if (item.getImagesBlob() != null && item.getImagesBlob().length > 0) {
+				img = item.getImagesBlob()[0];				
+			} 
+			propStmt.setBytes(20, img);
+			
+			
+			Double[] pnt = GeoRequest.sendRequest(item.getAddress(), item.getCity(), item.getCountry());
+			String center = null;
+			if (pnt != null) {
+				center = "POINT(" + pnt[0] + " " + pnt[1] + ")";				
+			}
+			propStmt.setString(21, center);
+			
 			propStmt.execute();
 			
 		} catch (SQLException e) {
@@ -97,7 +117,7 @@ public class DB {
 		return retVal;
 	}
 
-	public static void init() throws SQLException {
+	public static void init() throws SQLException, ClassNotFoundException {
 		
 		// TODO: to config
 		String url = "jdbc:postgresql://localhost:5432/MM";
@@ -105,7 +125,8 @@ public class DB {
 		String password = "dbuser";
 
 		con = DriverManager.getConnection(url, user, password);
-
+	    //((org.postgresql.PGConnection)con).addDataType("geometry", Class.forName("org.postgis.PGgeometry"));
+		 
 		userStmt = con
 				.prepareStatement("insert into mmuser(name,phonenumber,phonenumber2) values(?,?,?)");
 
@@ -124,11 +145,19 @@ public class DB {
 		// ownerrating
 		// entrydate
 		propStmt = con
-				.prepareStatement("insert into mmproperty(country,city,address,"
-						+ "price,numberofpayments,size,numberofrooms,floor,apartmenttype,propertysummary,"
-						+ "balcony,ishandicapaccessible,isroommatesuitable,hasaps,"
-						+ "haswindowbars,hasparking,hasairconditioning,haselevator,flagschecksum) "
-						+ "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+				.prepareStatement("insert into mmproperty(" +
+						"country,city,address,price,numberofpayments," +
+						"size,numberofrooms,floor,apartmenttype,propertysummary," +
+						"balcony,ishandicapaccessible,isroommatesuitable,hasaps,haswindowbars," +
+						"hasparking,hasairconditioning,haselevator,flagschecksum,exteriorimageurl," + 
+						"maplocation) "
+						+ "values(" +
+						"?,?,?,?,?," +
+						"?,?,?,?,?," +
+						"?,?,?,?,?," +
+						"?,?,?,?,?," +
+						//"ST_GeographyFromText('POINT(35.107646 33.019304)'))");
+						"ST_GeographyFromText(?))");
 	}
 
 	public static void cleanUp() {
