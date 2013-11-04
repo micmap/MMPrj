@@ -2,10 +2,12 @@ package db;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.postgresql.geometric.PGpoint;
@@ -19,6 +21,7 @@ public class DB {
 	private static Connection con;
 	private static PreparedStatement userStmt;
 	private static PreparedStatement propStmt;
+	private static PreparedStatement selectUserStmt;
 
 	public static void save(ZvzListItem item) {
 
@@ -27,6 +30,7 @@ public class DB {
 			saveToPropertyTbl(item);
 		} catch (Exception e) {
 			Logger.log("error saving item to db", e);
+			Logger.log(item.toString());
 		}
 	}
 
@@ -43,7 +47,8 @@ public class DB {
 			userStmt.setString(3, item.getSellerPhone2());
 			userStmt.execute();
 		} catch (SQLException e) {
-			Logger.log("error saving item to db", e);
+			Logger.log("error saving user to db", e);
+			Logger.log(item.toString());
 		}
 	}
 
@@ -77,13 +82,14 @@ public class DB {
 			propStmt.setBoolean(18, getBool(item.getElevator()));
 			propStmt.setInt(19, -1); // TODO: flagschecksum
 			
+			// image
 			byte[] img = null;
 			if (item.getImagesBlob() != null && item.getImagesBlob().length > 0) {
 				img = item.getImagesBlob()[0];				
 			} 
 			propStmt.setBytes(20, img);
 			
-			
+			// geo
 			Double[] pnt = GeoRequest.sendRequest(item.getAddress(), item.getCity(), item.getCountry());
 			String center = null;
 			if (pnt != null) {
@@ -91,10 +97,20 @@ public class DB {
 			}
 			propStmt.setString(21, center);
 			
+			// use relation
+			BigDecimal userId = BigDecimal.ZERO;
+			selectUserStmt.setString(1, item.getSellerPhone());
+			ResultSet res = selectUserStmt.executeQuery();
+			if (res != null && res.next()) {
+				userId = res.getBigDecimal(1);
+				propStmt.setBigDecimal(22, userId);
+			}
+			
 			propStmt.execute();
 			
 		} catch (SQLException e) {
-			Logger.log("error saving item to db", e);
+			Logger.log("error saving property to db", e);
+			Logger.log(item.toString());
 		} 
 
 	}
@@ -125,7 +141,6 @@ public class DB {
 		String password = "dbuser";
 
 		con = DriverManager.getConnection(url, user, password);
-	    //((org.postgresql.PGConnection)con).addDataType("geometry", Class.forName("org.postgis.PGgeometry"));
 		 
 		userStmt = con
 				.prepareStatement("insert into mmuser(name,phonenumber,phonenumber2) values(?,?,?)");
@@ -150,14 +165,15 @@ public class DB {
 						"size,numberofrooms,floor,apartmenttype,propertysummary," +
 						"balcony,ishandicapaccessible,isroommatesuitable,hasaps,haswindowbars," +
 						"hasparking,hasairconditioning,haselevator,flagschecksum,exteriorimageurl," + 
-						"maplocation) "
+						"maplocation,useruniqueid) "
 						+ "values(" +
 						"?,?,?,?,?," +
 						"?,?,?,?,?," +
 						"?,?,?,?,?," +
 						"?,?,?,?,?," +
-						//"ST_GeographyFromText('POINT(35.107646 33.019304)'))");
-						"ST_GeographyFromText(?))");
+						"ST_GeographyFromText(?), ?)");
+		
+		selectUserStmt = con.prepareStatement("SELECT useruniqueid FROM mmuser WHERE phonenumber LIKE ?");
 	}
 
 	public static void cleanUp() {
