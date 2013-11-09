@@ -1,0 +1,21 @@
+package db;
+
+public enum MMApartmentTypeEnum
+{
+    APARTMENT_APRT_TYPE,
+    PENTHOUSE_APRT_TYPE,
+    STUDIO_APRT_TYPE,
+    BASEMENT_APRT_TYPE,
+    PARTERRE_APRT_TYPE,
+    DUPLEX_APRT_TYPE,
+    TRIPLEX_APRT_TYPE,
+    HOUSE_APRT_TYPE,
+    UNIT_APRT_TYPE,
+    FARM_APRT_TYPE,
+    WAREHOUSE_APRT_TYPE,
+    TRAILER_APRT_TYPE,
+    RESIDENTIAL_BUILDING_APRT_TYPE,
+    SHORT_PERIOD_TIME_TYPE,
+	// a bypass to create ApartmentFlagsEnum.count
+    ApartmentType_COUNT;
+}

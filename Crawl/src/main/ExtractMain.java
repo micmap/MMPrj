@@ -1,6 +1,7 @@
 package main;
 
 import db.DB;
+import db.DBRunnable;
 import utils.Logger;
 import extract.zvz.ZvzExtractor;
 
@@ -17,6 +18,7 @@ public class ExtractMain {
 		
 		try {
 			DB.init();
+			(new Thread(new DBRunnable())).start();
 			extract.extract();
 		} catch (Exception e) {
 			Logger.log("Main program error", e);

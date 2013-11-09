@@ -16,6 +16,7 @@ public class ZvzListItem {
 	private String address;
 	private String size;
 	private String floor;
+	private String floorInBuilding;
 	private String payments;
 	private String parking;
 	private String furniture;
@@ -30,12 +31,16 @@ public class ZvzListItem {
 	private String price;
 	private String sellerName;
 	private String sellerPhone;
+	private String sellerPhone2;
 	private String furnitureNotes;
 	private String notes;
 	private byte[][] imagesBlob;
 	private boolean isDuplicateMark;
 	private boolean isRealtor;
 	private String protectedSpace;
+	private String country;
+	private String isPetsAllowed;
+	private String propCondition;
 	
 	public ZvzListItem() {
 	}
@@ -99,6 +104,12 @@ public class ZvzListItem {
 		bldr.append("isRealtor:" + isRealtor);
 		bldr.append("\n");
 		bldr.append("protectedSpace:" + protectedSpace);
+		bldr.append("\n");
+		bldr.append("isPetsAllowed:" + isPetsAllowed);
+		bldr.append("\n");
+		bldr.append("floorInBuilding:" + floorInBuilding);
+		bldr.append("\n");
+		bldr.append("propCondition:" + propCondition);
 		bldr.append("\n");
 		int numOfImages = imagesBlob != null ? imagesBlob.length : 0;
 		bldr.append("images:" + numOfImages);
@@ -457,15 +468,54 @@ public class ZvzListItem {
 		this.protectedSpace = protectedSpace;
 	}
 
+	/**
+	 * additional phone number of the seller
+	 * @return
+	 */
 	public String getSellerPhone2() {
-		// TODO implement
-		return getSellerPhone();
+		return sellerPhone2;
 	}
 
-	public String getCountry() {
-		// TODO implement
-		return "ישראל";
+	public void setSellerPhone2(String sellerPhone2) {
+		this.sellerPhone2 = sellerPhone2;
 	}
+	
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	/**
+	 * number of floors in the building
+	 * @return
+	 */
+	public String getFloorInBuilding() {
+		return floorInBuilding;
+	}
+
+	public void setFloorInBuilding(String floorInBuilding) {
+		this.floorInBuilding = floorInBuilding;
+	}
+
+	public String getIsPetsAllowed() {
+		return isPetsAllowed;
+	}
+
+	public void setIsPetsAllowed(String isPetsAllowed) {
+		this.isPetsAllowed = isPetsAllowed;
+	}
+
+	public String getPropCondition() {
+		return propCondition;
+	}
+
+	public void setPropCondition(String propCondition) {
+		this.propCondition = propCondition;
+	}
+	
 
 	////////// getters and setters //////////
 

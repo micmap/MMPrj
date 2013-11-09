@@ -19,6 +19,9 @@ public class Config {
 	private boolean isCheckForDuplicates;
 	private boolean isIgnoreDuplicates;
 	private boolean isRealtors;
+	private String dbConnection;
+	private String dbUser;
+	private String dbPswd;
 	
 	private Config() {
 		
@@ -38,7 +41,12 @@ public class Config {
 					configuration.getBoolean("isIgnoreDuplicates");
 			isRealtors =
 					configuration.getBoolean("isRealtors");
-			
+			dbConnection =
+					configuration.getString("dbConnection");
+			dbUser =
+					configuration.getString("dbUser");
+			dbPswd =
+					configuration.getString("dbPswd");
 		} catch (Exception e) {
 			Logger.log("Error reading configuration", e);
 		}
@@ -85,4 +93,18 @@ public class Config {
 	public boolean isRealtors() {
 		return isRealtors;
 	}
+
+	public String getDbConnection() {
+		return dbConnection;
+	}
+
+	public String getDbUser() {
+		return dbUser;
+	}
+
+	public String getDbPswd() {
+		// TODO: use something safer?
+		return dbPswd;
+	}
+
 }

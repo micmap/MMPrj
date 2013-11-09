@@ -17,6 +17,7 @@ import extract.base.IExtractor;
  */
 public class ZvzItemExtractor implements IExtractor {
 
+	private static final String FLOOR_SPLIT = " מתוך ";
 	private static final String PROP_TYPE_STRING = "סוג הנכס: ";
 	private static final String NUM_OF_ROOMS_STRING = "חדרים: ";
 	private static final String ARAE_STRING = "אזור: ";
@@ -29,7 +30,7 @@ public class ZvzItemExtractor implements IExtractor {
 	private static final String PROP_STATE_STRING = "מצב הנכס: ";
 	private static final String ENT_DATE_STRING = "תאריך כניסה: ";
 	private static final String PARKING_STRING = "חניה: ";
-	private static final String FURNITURE_STRING = "ריהוט: ";
+	public static final String FURNITURE_STRING = "ריהוט: ";
 	private static final String AC_STRING = "מיזוג אוויר: ";
 	private static final String SORAGIM_STRING = "סורגים: ";
 	private static final String BALCONY_STRING = "מרפסות: ";
@@ -40,11 +41,14 @@ public class ZvzItemExtractor implements IExtractor {
 	private static final String FURNITURE_NOTES_STRING = "פירוט הריהוט: ";
 	private static final String NOTES_STRING = "הערות: ";
 	private static final String PROTECTED_SPACE = "ממ\"ד: ";
+	private static final String PETS = "בעלי חיים: ";
+	public static final String PROP_CONDITION = "מצב הנכס: ";
 				
 	private static final String DATA_CONTAINER_ID_SUFFIX = "_container";
 	private static final String NOTES_ID = "ctl00_lblNotes";
 	private static final String FURNITURE_NOTES_ID = "ctl00_lblapp_Furniture";
 	private static final String SELLER_PHONE_ID = "ctl00_lblPhone1";
+	private static final String SELLER_PHONE_2_ID = "ctl00_lblPhone2";
 	private static final String SELLER_NAME_ID = "ctl00_lblContactPerson";
 	private static final String PRICE_ID = "ctl00_lblCostTotal";
 	private static final String PROPS_2_SUFFIX = "_props_2";
@@ -53,7 +57,8 @@ public class ZvzItemExtractor implements IExtractor {
 	private static final String PROPS_1_FORMAT = "tbody[1]/tr[%s]/td[1]/div[1]";
 	private static final String LIST_ITEM_PREFIX = "list_item_";
 	private static final String DUPLICATE_MARK_COLOR = "color: rgb(187, 187, 187)";
-	private static final String STYLE_ATTR = "style";	
+	private static final String STYLE_ATTR = "style";
+	private static final String ITEM_COUNTRY = "ישראל";	
 	
 	WebElement itemDataContainer;
 	WebDriver webDriver;
@@ -93,8 +98,10 @@ public class ZvzItemExtractor implements IExtractor {
 		extractPrice();
 		extractSellerName();
 		extractSellerPhone();
+		extractSellerPhone2();
 		extractFurnitureNotes();
 		extractNotes();
+		listItem.setCountry(ITEM_COUNTRY);
 		// const data
 		
 		return true;
@@ -150,6 +157,20 @@ public class ZvzItemExtractor implements IExtractor {
 					By.id(SELLER_PHONE_ID));
 			if (elem != null) {
 				listItem.setSellerPhone(elem.getText());
+			}
+		
+		} catch (Exception e) {
+			
+		}	
+	}
+	
+	private void extractSellerPhone2() {
+
+		try {
+			WebElement elem = itemDataContainer.findElement(
+					By.id(SELLER_PHONE_2_ID));
+			if (elem != null) {
+				listItem.setSellerPhone2(elem.getText());
 			}
 		
 		} catch (Exception e) {
@@ -226,6 +247,9 @@ public class ZvzItemExtractor implements IExtractor {
 				} else if (fullText.startsWith(PROTECTED_SPACE)) {
 					String txt = delFromTxt(fullText, PROTECTED_SPACE);
 					listItem.setProtectedSpace(txt);
+				} else if (fullText.startsWith(PETS)) {
+					String txt = delFromTxt(fullText, PETS);
+					listItem.setIsPetsAllowed(txt);
 				} else {
 					Logger.log("*** Unknown prop in prop2: " + fullText + " " + i);
 				}
@@ -256,6 +280,9 @@ public class ZvzItemExtractor implements IExtractor {
 				if (fullText.startsWith(PROP_TYPE_STRING)) {
 					String txt = delFromTxt(fullText, PROP_TYPE_STRING);
 					listItem.setPropType(txt);
+				} else if (fullText.startsWith(PROP_CONDITION)) {
+					String txt = delFromTxt(fullText, PROP_CONDITION);
+					listItem.setPropCondition(txt);
 				} else if (fullText.startsWith(NUM_OF_ROOMS_STRING)) {
 					String txt = delFromTxt(fullText, NUM_OF_ROOMS_STRING);
 					listItem.setNumOfRooms(txt);
@@ -272,8 +299,15 @@ public class ZvzItemExtractor implements IExtractor {
 					String txt = delFromTxt(fullText, SIZE_STRING);
 					listItem.setSize(txt);
 				} else if (fullText.startsWith(FLOOR_STRING)) {
-					String txt = delFromTxt(fullText, FLOOR_STRING);
-					listItem.setFloor(txt);
+					
+					String[] split = delFromTxt(fullText, FLOOR_STRING).split(FLOOR_SPLIT);
+					if (split.length > 0) {
+						listItem.setFloor(split[0]);
+					}
+					if (split.length > 1) {
+						listItem.setFloorInBuilding(split[1]);	
+					}
+					
 				} else if (fullText.startsWith(PAYMENTS_STRING)) {
 					String txt = delFromTxt(fullText, PAYMENTS_STRING);
 					listItem.setPayments(txt);

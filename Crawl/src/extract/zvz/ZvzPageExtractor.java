@@ -14,6 +14,7 @@ import utils.Logger;
 import utils.Sleeper;
 import data.ZvzListItem;
 import db.DB;
+import db.DBRunnable;
 import extract.base.IExtractor;
 
 /**
@@ -57,7 +58,7 @@ public class ZvzPageExtractor implements IExtractor {
 	    		
 	    		if (isValidRow(row)) {
 	    			
-	    			Logger.log("---");
+	    			//Logger.log("---");
 	    			
 	    			ZvzListItem listItem = new ZvzListItem();
 	    			String origItemId = row.getAttribute("id").
@@ -96,7 +97,7 @@ public class ZvzPageExtractor implements IExtractor {
     					Logger.log("Error extracting item data", e);
 					}
     				
-    				Logger.log("---");
+    				//Logger.log("---");
 	    		}
 	    	}
 	    	
@@ -153,7 +154,7 @@ public class ZvzPageExtractor implements IExtractor {
 
 		Logger.log("Saving list item: " + listItem.getOrigItemId());
 		//Logger.log(listItem.toString());
-		DB.save(listItem);
+		DBRunnable.queueSaveToDB(listItem);
 	}
 
 	private boolean isValidRow(WebElement row) {
